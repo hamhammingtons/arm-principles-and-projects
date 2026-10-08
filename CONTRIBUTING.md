@@ -1,8 +1,6 @@
 # Contributing
 
-Thank you for taking an interest in this personal learning-portfolio repository.
-
-This repository is primarily a personal collection of ARM learning notes and examples. Contributions are welcome but not required — the simplest way to help is to provide feedback.
+This repository is primarily a personal collection of ARM learning notes and examples. Contributions are welcome but not required, the simplest way to help is to provide feedback.
 
 Preferred ways to contribute:
 
@@ -15,6 +13,6 @@ Guidelines:
 - If filing a PR, include a brief description of the change and why it's helpful.
 - Be respectful and civil; this is a small personal project.
 
-If you prefer to reach out privately, leave contact instructions in an issue and the repository owner may follow up.
+If you prefer to reach out privately, leave contact  instructions in an issue and the repository owner may follow up. You may also contact the owner via discord(hammingtons)
 
-Thanks — contributions and feedback are appreciated.
+Thanks - contributions and feedback are appreciated.
