@@ -1,0 +1,15 @@
+roadmap 
+request to future self: try to avoid ai usage or help 
+
+learn the basics of arm via https://azeria-labs.com/writing-arm-assembly-part-1 to learn the basics of arm and how to write simple programs.
+Please learn how the building of a program works such as compiling linking and executing an assembly program and also **how to use gdb**
+^^
+after that build a simple projects such as a calculator that adds 2 numbers and prints the result onto the console 
+(after youre done with that below)
+
+Read "Programming with 64-Bit ARM Assembly" by Stephen Smith to learn more about ARM assembly programming and how to write more complex programs.
+Create a more complex project(s) like reversing a string, reading a file, or implementing a simple algorithm (like sorting) in ARM assembly language or even creating a simple text game 
+
+try to comprehend (afterwards?) the THE ARM DEVELOPER DOCUMENTATION as it will help you understand the ARM architecture and its features, which will be useful for writing efficient assembly code.
+
+after youre done all of that create a major project which will be used for your applying portoflio. This should be something like a bootloader which is undeniably hard but good 
