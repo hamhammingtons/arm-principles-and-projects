@@ -1,0 +1,10 @@
+We will be using an emulation enivroment via running code on https://cpulator.01xz.net/?sys=arm 
+as it is the easiest way to get started with 32 bit arm assembly. As, of now, m4 chips and even generations from m1 do not support 32 bit arm assembly natively 
+
+so we have been left with 2 options 
+    either use docker again which is extremely excrutiating to use, from past experiences running NASM has been kind of a pain. 
+or use an emulation environment which is much easier to use and get started with
+
+ill go with the first option therefore i have to screenshot the process and afterwards comment on it - what happened and so on 
+
+// MAIN: the calculator project will be made there. 

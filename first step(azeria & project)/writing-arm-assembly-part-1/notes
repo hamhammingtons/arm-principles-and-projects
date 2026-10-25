@@ -1,0 +1,43 @@
+- part 1 
+at the very lowest levels we have 
+    signals: 
+    for example 0 volts represents a low voltage = off 
+                5 volts represents a high voltage = on 
+
+to not use the signals directly we use a binary system to represent the signals 
+    0 = off 
+    1 = on
+
+- part 2 
+if you look at this binary code (machine language instruction) you cant really tell much 
+    1110 0001 1010 0000 0010 0000 0000 0001
+thats because its machine code 
+
+to simplify this we created assembly, in which we use a term called mnemonics
+    Mnemonics - human readable instructions that represent the machine code. 
+                You can also say that theyre binary patterns that are represented 
+                in a human form 
+As an example you could say that MOV R0, R1 is a mnemonic, because it has MOV in it, and arguments
+which are written in text form. 
+
+One of the main things we must say: 
+    the binary code that we looked at is called machine code 
+        -> the assembly language program is the translation of the machine code into a human form (collection of it) (**VIA WHAT? STATED BELOW**)
+            -> the thing that was made to actually read assembly is called an assembly language which consists of mnemonics
+
+Short recap: 
+    The assembly language program is a translation of the machine code to human form via the assembly language, which consists of mnemonics.
+
+- part 3 
+Now that we know what an assembly program is we can talk about what an assembler is 
+So in simple terms its a process of converting ARM assembly language to ARM machine code. (main def.)
+    -> The assembler is a program that takes the assembly language program and converts it into machine code.
+
+In arm we use a cli to run an assembler which is called as. 
+
+**All in all definiton:**
+    The process of turning an ARM assembly language program to ARM machine code using an assembler is called assembling.
+
+
+Source: https://azeria-labs.com/writing-arm-assembly-part-1/
+"In summary, we learned that computers understand (respond to) the presence or absence of voltages (signals) and that we can represent multiple signals in a sequence of 0s and 1s (bits). We can use machine code (sequences of signals) to cause the computer to respond in some well-defined way. Because we can’t remember what all these sequences mean, we give them abbreviations – mnemonics, and use them to represent instructions. This set of mnemonics is the Assembly language of the computer and we use a program called Assembler to convert code from mnemonic representation to the computer-readable machine code, in the same way a compiler does for high-level languages."

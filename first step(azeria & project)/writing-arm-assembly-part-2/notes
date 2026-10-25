@@ -1,0 +1,137 @@
+this chapter captures data types in assembly 
+for self: repeat how the formulas work again and try binary arithemitc 
+
+
+ARM works with values stored in registers and memory, and these values can be interpreted as different datatypes
+    <source>https://azeria-labs.com/arm-data-types-and-registers-part-2/</source>
+1. signed (can hold negative and non-negative values)
+2. unsigned (can hold non-negative values, but cannot hold negative values)
+3. bytes (8 bits)
+4. half-words (16 bits)
+5. words (32 bits)
+
+    <source>https://en.wikipedia.org/wiki/Range_(computer_programming)</source>
+Range - set of possible values that a variable can hold 
+    in simple terms - imagine a signed 16 bit integer. the set of possible values that it can hold is -32,768 to 32,767. 
+    <source>google ai</source>
+how range is calculated 
+
+**recap if you dont want to read the documentation** 
+1. signed values can be negative or non-negative; unsigned values cannot be negative
+2. an n bit unsigned value has the range [0, 2^{n} - 1]
+3. an n bit signed value in two's complement has the range [-2^{n-1}, 2^{n-1} - 1]
+4. in both formulas, n means the number of bits. The signed formula comes from the value of each bit, not from simply splitting a number in half.
+
+**UNSIGNED**
+As we are working with unsigned variables, we state that they represent variables which are 
+1. whole numbers (meaning no decimals and etc)
+2. they cant be negative
+3. they can also represent a 0
+So to find a range (possible values that it can hold) we need 2 things: a minium and a maxium value
+
+Minium, is of course, a 0, because **unsigned variables can hold 0**, but not negative numbers.
+
+To find the maxium value
+so in a general sense a bit has 2 states which are (0;1), which means we can have 2 of them for checking how many combinations we might have
+
+we can use a variable such as 'n' to represent how many bits we have all in all 
+so we can create a formula 2^{n}, but it doesnt work very well for finding the maxium value as youll see why in a second 
+example 
+    You have 3 bits and you need to represent the range of a variable
+So we'll just plug things in 
+2^{3} = 2 * 2 * 2 = 8 
+So now lets check this in practice
+
+000	- (0 + 0 + 0) -	0
+001	- (0 + 0 + 1) -	1
+010	- (0 + 2 + 0) - 2
+011	- (0 + 2 + 1) - 3
+100 - (4 + 0 + 0) - 4
+101	- (4 + 0 + 1) - 5
+110	- (4 + 2 + 0) - 6
+111	- (4 + 2 + 1) - 7
+
+There are 8 combinations, and the biggest value is 7.
+**so if we create a general formula**
+**2^{n} - 1**
+because the values start at 0, the biggest value is one less than the number of combinations
+
+lets plug it in 
+2^3 - 1 = 8 - 1 = 7 
+so in our example we'll have the range of [0, 7]
+
+**SIGNED VARIABLES** 
+As we are working with signed variables we will need again 2 things: a maxium and a minium value 
+however now minium value is not 0 as signed variables **can hold negative numbers**
+therefore we need to create a formula for both minium and maxium values
+For ARM signed integers, this way of representing numbers is called two's complement.
+
+maxium (for an easier explanation, minium is below this)
+Signed variables use the leftmost bit as part of the number, not just as a sign marker.
+For an n bit signed variable, the leftmost bit has a value of -2^{n-1}, and the other bits have positive values.
+To find the maxium value, the leftmost bit is 0, so it contributes 0, and all the other bits are 1.
+That gives us the formula 
+2^{n-1} - 1 
+where n-1 counts the bits that can have positive values
+**The leftmost bit still has a value in the equation; it contributes 0 when it is 0.**
+
+minium 
+For the minium value, the leftmost bit is 1 and all the other bits are 0.
+The leftmost bit has a value of -2^{n-1}, so the minium value is -2^{n-1}.
+This is why signed values have one more negative value than positive value.
+
+non-negative
+imagine something like 0101
+now as we know the leftmost bit is 0 
+lets try to calculate it 
+0 = -8 (leftmost bit)
+1 = 4 
+0 = 2 
+1 = 1
+to show how this works 
+(0 * (-8)) + (1 * 4) + (0 * 2) + (1 * 1) = 5
+The leftmost bit contributes 0 here, so the value is positive.
+
+negative
+lets try the same thing but this time the leftmost bit will be a 1
+1 = -8 (leftmost bit)
+1 = 4 
+0 = 2 
+1 = 1 
+lets try to now calculate all of this 
+(1 * (-8)) + (1 * 4) + (0 * 2) + (1 * 1) = -3
+The leftmost bit contributes -8 here, so the value is negative.
+
+**in the simplest of terms we can look at a 3 bit example**
+lets imagine we have 3 bits 
+so we will work with 2^{3} = 8 combinations in total
+the bit weights are -4, 2, and 1, so all 8 patterns represent the values from -4 to 3
+the non-negative values are [0, 1, 2, 3], and the negative values are [-1, -2, -3, -4]
+there is one extra negative value because 0 is non-negative
+
+In conclusion **the leftmost bit has a value of -2^{n-1} in the equation. When it is 0, it contributes 0; when it is 1, it contributes a negative value.**
+
+Thus, we can finally state that 
+
+**the range for an n bit signed variable is -2^{n-1} to 2^{n-1} - 1.**
+
+
+**terms** 
+1. an operand is a value, register, or memory location that an instruction uses. there can be multiple operands in a single instruction.
+
+
+questions for self: 
+    <source>website: https://home.adelphi.edu/~siegfried/cs174/174l4.pdf</source>
+1. does r8 represent a register or data? is it used in all architectures? Is it used in ARM?
+A: r8 is a register name in 32-bit ARM (AArch32). Register names are architecture-specific; 64-bit ARM (AArch64) has x8.
+2. what does the following example try to show us?
+   This uses x86 Intel-style assembly syntax, not ARM syntax. In this example, 10h means hexadecimal 10 (decimal 16). The brackets mean the instruction uses the value stored at the address given inside them; how that address is written depends on the assembler.
+'
+.data
+    var1 BYTE 10h ; whats an h? 
+    mov al, [00010400] ; how does an offset work? 
+    ; or you could write 
+    mov al, var1
+'
+Why does the text state that 'this is considered a direct memory operand?'
+A: the address is written directly in the operand, instead of being held in a register. The exact syntax depends on the assembler and architecture.
