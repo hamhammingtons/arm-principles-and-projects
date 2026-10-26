@@ -16,6 +16,8 @@ Range - set of possible values that a variable can hold
     <source>google ai</source>
 how range is calculated 
 
+-- paragraph 1 whats range and how its calculated for signed/unsigned variables -- 
+
 **recap if you dont want to read the documentation** 
 1. signed values can be negative or non-negative; unsigned values cannot be negative
 2. an n bit unsigned value has the range [0, 2^{n} - 1]
@@ -115,9 +117,77 @@ Thus, we can finally state that
 
 **the range for an n bit signed variable is -2^{n-1} to 2^{n-1} - 1.**
 
+-- parapraph 1 end -- 
 
-**terms** 
-1. an operand is a value, register, or memory location that an instruction uses. there can be multiple operands in a single instruction.
+-- paragraph 2: how to convert decimal to binary easily -- 
+basically imagine a number like 10 
+Find the largest power of 2 that fits into your number and write a 1 in that position.
+Subtract that power from your number.
+Move to the next lower power of 2. If it fits into the remainder, write a 1 and subtract; if it doesn't, write a 0.
+Repeat until you reach 1.
+
+so lets try that with number 10 
+we can see that 8,4,2,1 fits into 10 
+10 - 8 = 2 (bit: 1)
+2 - 4 = doesnt fit (bit 0)
+2 - 2 = 0 (bit: 1)
+0 - 1 = doesnt fit (bit: 0) 
+
+so then you just write these bits in order 
+1010 
+thats the number 10 in binary 
+(1*8) + (0 * 4) + (1 * 2) + (0 * 1) = 8 + 2 = 10
+
+Special note: whenever you are trying to subtract 2 binary numbers you should just flip the one with the negative sign 
+so what i mean by that is if you have 
+A - B
+what you should do is treat it as A + (-B) as we do like with vectors in geometry 
+so then what you should do is use two's complement on the binary number B and just flip it then you do addition, this is simple 
+
+-- paragraph 2 end -- 
+
+-- paragraph 3 endians --
+
+there are 2 ways of viewing bytes in memory:
+1. big endian 
+2. little endian 
+
+(1)little endian machines have the **least significant byte** stored at the lowest adress (the one closest to 0)
+(2)big endian machines have the **most singificant byte** stored at the lowest adress
+
+ARM is special because it allowed bi-endiannes, meaning that you can switch endianness.
+ex
+            <-higher adress      -lower adress
+Big endian : 0,     1,      2,      3,      ...
+            <- higher adress     -lower adress
+Little end.: 3,      2,      1       0,      
+
+-- paragraph 3 end -- 
+
+-- paragraph 4 ARM registers -- 
+
+i wont get too deep into this so we will use data from the website
+there are 30 general purpose 32 bit registers
+the first 16 registers are accesible in user-level mode 
+the additional registers are available in priviliged software execution
+
+the website states that they will work with registers accesible in any privilige mode r0-r15
+
+The 16 registers can be split into 2 groups which are 
+1. General purpose (GP)
+2. Special purpose (SP)
+
+(1) gp's are r1 - r6, r8 - r10 and r7(syscall), r11(frame pointer) fall into this category too 
+(2) r12(intra procedural call) r13(stack pointer) r14(link register) r15(program counter) cspr are current program status register
+
+more about registers: 
+    <source>https://azeria-labs.com/arm-data-types-and-registers-part-2/</source>
+    # I recomend reading this part as it is interesting 
+
+R0–R3: Used heavily for passing function arguments and returning results.
+R7: Often used specifically as the syscall number register in Linux EABI system calls (e.g., telling the kernel whether you want to exit, read, or write).
+R11 (Frame Pointer - FP): Used to keep track of stack frames during function calls.
+R12 (Intra-Procedure-Call scratch register - IP): Can be used by linkers as a temporary workspace during long function calls.
 
 
 questions for self: 
@@ -130,8 +200,8 @@ A: r8 is a register name in 32-bit ARM (AArch32). Register names are architectur
 .data
     var1 BYTE 10h ; whats an h? 
     mov al, [00010400] ; how does an offset work? 
-    ; or you could write 
     mov al, var1
+    ; or you could write 
 '
 Why does the text state that 'this is considered a direct memory operand?'
 A: the address is written directly in the operand, instead of being held in a register. The exact syntax depends on the assembler and architecture.
