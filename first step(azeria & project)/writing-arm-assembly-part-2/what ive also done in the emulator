@@ -1,0 +1,12 @@
+ive tried using instructions of add 
+
+ive noticed that assembly uses the format of 
+mnemonic destination, source
+
+some mnemonics approve multiple arguments such as add 
+
+ive also learned how the cmp instruction works 
+it basically does this 
+    first source register - second source register (could be a value) 
+
+we use flags to see what the cmp resulted in 
