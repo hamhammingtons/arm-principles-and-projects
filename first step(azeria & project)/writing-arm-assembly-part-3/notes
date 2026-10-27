@@ -1,0 +1,64 @@
+arm processors have 2 states they can be in 
+
+1. arm 
+2. thumb 
+
+**these have nothing to do with privilige levels** 
+
+The main difference between them is the instruction set 
+(1) arm state are always 32 bit 
+(2) thumb state are mostly 16 bit 
+
+-- paragraph 1 arm instruction set -- 
+
+most of the instructions of assembly follow the format of: 
+MNEMONIC{S} {condition} {Rd}, Operand 1, Operand 2 
+
+Mnemonic - short name of an instruction 
+{S} - An optional suffix. If S is specified, the condition flags are updated on the result of the operation
+{condition} - a condition that has to be met in order for the instruction to be executed
+{Rd} - register, it is the destination for storing the result of the instruction 
+Operand 1 - first operand (argument), either a register or an immediate value (like #5)
+Operand 2 - Second (flexible) operand, can be either a register (with an optional shift) or an immediate value
+
+
+Condition is tied to the CSPR registers value, meaning its specific bits within the register
+Operand2 is a *flexible* operand, because we can use it in various ways: 
+1. as an immediate value (like #5) 
+2. as a register (r0 or whatever)
+3. *as a register with a shift* 
+
+Id like to expand on register with a shift 
+
+So basically how this works is we take a register and put it as the operand 2, then we add a shift. 
+format: {Rd}, {Shift name}
+LSL - Logical Shift Left - moves all bits to the left by n values - LSL #n. Math: multiplies by 2^{n}
+LSR - Logical Shift Right - moves all bits to the right by n values - LSR #n. Math: divide by 2^{n}
+With signed bits: 
+ASR - Arithmetic Shift Right - moves all bits to the right *but* preserves the leftmost bit (the sign bit)
+| This one has interesting behaviour: so for example if we had had 1000 0000 and we did ASR by #3 it would preserve the 1 in a weird way: So this number would become 1111 0000.  Same thing if we had 0 in the leftmost bit.
+ASL - Arithmetic Shift Left - same thing as lsl dont even mind it 
+*ROR* - Rotate right - basically what it does is move the bits in an integer to the right. 
+    So actually, for example 
+    0101010101010[1] this [1] matters 
+    so if we apply ROR this would become 
+    1010101010101
+    What happened is actually interesting so basically it took this 1 and just pushed it to the leftmost bit position. So it just took the rightmost value and rotated it to make it fit into the 1st bit. So the whole construction changed.
+    In better words: The rightmost [1] detaches. The rest of the numbers (0101010101010) shift right by one slot via an LSR mechanic, leaving an empty space at the far left: _0101010101010. Then that 1 gets put into the blank spot. Thats about it.
+    **This is a 32 bit loop meaning the process is isolated**, we dont use carry flags here
+
+*RRX* - Rotare right extended by 1 bit (the x) - this operation uses the CPSR Carry flag as the 33rd bit. so in basic words: same process happens: the rightmost bit goes into the carry flag and it detaches from this binary value, then **whatever was previously stored in the carry flag goes into the left edge of the register**.
+    **The RRX instruction does not need shift amount (n) as it is only used *for 1 bit* shift meaning its predefined.***
+    **RRX is a 32 bit operation**
+
+**WHAT ID LIKE TO NOTE**: whenever youre manually calculating the shifts changes for exmaple 1 bit to the right, please make sure to start counting from 0. So in this logic, if we have had for example 0001 0000 and we wanted to shift right by 3, we would have to account that we start with 0. It mostly matters because we can say that this 1 is at position 5 but we would be wrong because counting starts from 0. so it would be actually at position number 4. so then it would become 2^{4-3} = 2^1 which is 0000 0010.
+ Just for self: you can just take the number without account 0 and then -= it by 1. So for example if it looks like its at position 5 you -1 it and then you get the actual position if you dont want to do all that. 
+
+
+About conditions: 
+So to write shorthand if statements or just write simple if statements we can include the {condition} factor in our format. This is called **conditional execution**
+But still we need a condition and in assembly its used with CPSR near and dearly. so basically we need first a condition 
+So for example lets say we compare 2 values 
+CMP is the mnemonic or instruction that is used to compare two operands. 
+    CMP r0, r1 
+    MOVLE r0, r3        @ -> if its true we move the value of register r3 to r0.  
