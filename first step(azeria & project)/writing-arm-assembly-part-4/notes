@@ -1,0 +1,136 @@
+arm uses a load store model for memory access 
+    this means that only load (LDR) and store (STR) instructions can access memory 
+
+on arm data must be moved to a register before working on it. Unlike x86 this has to be done 
+
+For example if we wish to increment a 32 bit value at a particular adress we would need to first load it into a register, then increment it in the register, and then store it at the particular address 
+
+Offset basically means distance from a starting address
+so you need to understand a few words before understanding this term
+
+Base adress - is basically the *starting point*, so where youre starting
+Offset - is basically the distance that takes you to get to your absolute destination (final point), or, more broadly speaking, a number that you add to a starting point to get to a new destination
+Absolute adress - is basically the adress youll get if you sum base address and offset 
+
+As an example, if you had 
+Base adress - 1000 (starting point)
+Offset - 4 (distance from absolute address)
+Absolute adress = 1000 + 4 = 1004 (the final address)
+
+i find this fun because its a way of using indexing
+imagine if you had a list in c: 
+    int list_here[3] = {10,20,30};
+and its in memory adress 1000 for example and this 1000 is kept at a register x1 
+so its indexes would be at
+index  value
+1000   10
+1004   20
+1008   30
+and you need to find the value of 30 
+so what you do is you load the memory address in a register, and then you create an absolute address
+    ldr r0, [x1, #8]       @ x1 is the base adress, #8 is the offset. 1000 + 8 = 1008.
+and you then get the value of 30 in r0.
+
+*
+*
+**-- code section --**
+*
+*
+
+.data  /* this is where data is stored and adress CANT be explicitly predicted. we need literal pool*/
+    var1: .word 3  /* variable 1 in memory. This is called a label, its later replaced with 
+                      an adress by the assembler */
+    var2: .word 4  /* variable 2 in memory */
+
+.text          /* start of the text (code) section  I RECOMEND DOING THIS */ 
+.global _start
+
+_start:
+    ldr r0, adr_var1  @ load the memory address of var1 via label adr_var1 into R0 
+    ldr r1, adr_var2  @ load the memory address of var2 via label adr_var2 into R1 
+    ldr r2, [r0]      @ load the value (0x03) at memory address found in R0 to register R2  
+    str r2, [r1]      @ store the value found in R2 (0x03) to the memory address found in R1 
+    bkpt             
+
+adr_var1: .word var1  /* address to var1 stored here 
+                literal meaning: store 32 bits and then fill in this value of var1 into it*/
+adr_var2: .word var2  /* address to var2 stored here */
+
+- code section end - 
+-
+- code explanation start- 
+
+So what ive noticed is that this is extremely similar of how pointers work in C
+
+First off id like to mention that this bottom part of the code is called a *literal pool*, what it basically does is it serves as a way of inputting variables into our code. Because instructions cant hold such big values as an immediate value for example mov r0 , 0x111111 or whatever we have to use a literal
+More official term: *a block of memory embedded in the code to hold literal values*
+
+Now lets talk about how its similar to c 
+So first off we define 
+    adr_var1: .word var1
+What this is, is like an interpretation of 
+    int *var1_ptr = &var1;
+I would like to mention, if you noticed, that we use the memory adress in our arm code instead of the variable in C we just defined. Because we need to load it.
+
+Now lets look at the _start section code 
+    ldr r0, adr_var1 
+what this did is it basically loaded the *contents* of adr_var1 to r0.
+C interpretation 
+    r0 = var1_ptr;
+so this does the same thing
+pointer dereferencing
+    ldr r2, [r0]
+what this did is it took the value of r0 which is a memory adress and then grabbed its actual value 
+C interpretation
+    int r2 = *var1_ptr;
+
+and str writes a register’s value to a memory address
+
+What we need to understand from it 
+1. Literal pools must be used when were working with data that we cant make immediate 
+2. to store data and load it we need to use these literal pools 
+
+-code explanation end -
+
+-- parapraph 1 Immediate value as offset -- 
+str Ra, [Rb, imm]
+ldr Ra, [Rc, imm]
+
+in this we use an immediate value as an offset 
+
+.data
+var1: .word 3
+var2: .word 4
+
+.text
+.global _start
+
+_start:
+    ldr r0, adr_var1  @ load the memory address of var1 via label adr_var1 into R0
+    ldr r1, adr_var2  @ load the memory address of var2 via label adr_var2 into R1
+    ldr r2, [r0]      @ load the value (0x03) at memory address found in R0 to register R2 
+    str r2, [r1, #2]  @ address mode: offset. Store the value found in R2 (0x03) to the memory address found in R1 plus 2. Base register (R1) unmodified. 
+    str r2, [r1, #4]! @ address mode: pre-indexed. Store the value found in R2 (0x03) to the memory address found in R1 plus 4. Base register (R1) modified: R1 = R1+4 
+    ldr r3, [r1], #4  @ address mode: post-indexed. Load the value at memory address found in R1 to register R3. Base register (R1) modified: R1 = R1+4 
+    bkpt
+
+adr_var1: .word var1   @value = 3
+adr_var2: .word var2   @value =4 
+
+-tracing-
+lets say these are the values 
+
+0x20000: 03 00 00 00   <- var1 = 3
+0x20004: 04 00 00 00   <- var2 = 4
+pool:    adr_var1 = 0x20000, adr_var2 = 0x20004
+
+#	Instruction	        What happens	                                    State after
+1	ldr r0, adr_var1	read the pool cell	                                r0 = 0x20000
+2	ldr r1, adr_var2	read the pool cell	                                r1 = 0x20004
+3	ldr r2, [r0]	    read memory at 0x20000	                            r2 = 3
+4	str r2, [r1, #2]	write 3 to 0x20004+2 = 0x20006	                    r1 still 0x20004
+5	str r2, [r1, #4]!	r1 becomes 0x20008 first, then write 3 to 0x20008	r1 = 0x20008
+6	ldr r3, [r1], #4	read memory at 0x20008 first, then r1 += 4	r3 = 3, r1 = 0x2000C
+
+continue tommorow: 
+2. Offset form: Register as the offset.
