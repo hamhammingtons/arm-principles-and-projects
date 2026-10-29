@@ -132,5 +132,7 @@ pool:    adr_var1 = 0x20000, adr_var2 = 0x20004
 5	str r2, [r1, #4]!	r1 becomes 0x20008 first, then write 3 to 0x20008	r1 = 0x20008
 6	ldr r3, [r1], #4	read memory at 0x20008 first, then r1 += 4	r3 = 3, r1 = 0x2000C
 
+**Although this is a working example for older versions of ARM this doesnt work for example in ARMv7, so i recomend you to check writing_file.s in the same folder as this one, as it contains working code. Small comment on why this doesnt work: mostly because in the example we have str r2, [r1, #2] the adress of [r1, #2] is lets say 0...02c, and we also have to add an offset to it, so if we represent this hex in decimal and then add the offset of 2 we would get 44 + 2 which is 46. Now theres a rule, since were using a .word as our memory, this number of 46 must be divisible by 4, as there are 4 bytes (32 bits) in a word. Thus, we must have no float values. If we do the program claims that we have misaligned data. If you divide 46/4 you would get 11.5. This is easy to fix however from the examples that ive seen from ai reviews and from some websites, we have to allocate data and work with it indirectly, which i havent learned to do yet.** 
+
 continue tommorow: 
 2. Offset form: Register as the offset.
